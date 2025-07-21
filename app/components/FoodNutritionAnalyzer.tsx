@@ -1,5 +1,6 @@
 "use client";
 
+import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
 interface NutritionData {
@@ -17,7 +18,7 @@ export const FoodNutritionAnalyzer = () => {
   const [imageBase64, setImageBase64] = useState<string | null>(null);
   const [detectedFood, setDetectedFood] = useState<string>("");
   console.log(detectedFood);
-  
+
   const [foodSearch, setFoodSearch] = useState<string>("");
   const [nutrition, setNutrition] = useState<NutritionData | null>(null);
   const [grams, setGrams] = useState(100);
@@ -61,23 +62,23 @@ export const FoodNutritionAnalyzer = () => {
     return data.nutrition;
   }
 
-const handleImageAnalyze = async () => {
-   if (!imageBase64) return;
-  try {
-    const label = await classifyImage(imageBase64);
-    setDetectedFood(label);
-    const nutri = await fetchNutrition(label);
-    setNutrition(nutri);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError("Unexpected error");
+  const handleImageAnalyze = async () => {
+    if (!imageBase64) return;
+    try {
+      const label = await classifyImage(imageBase64);
+      setDetectedFood(label);
+      const nutri = await fetchNutrition(label);
+      setNutrition(nutri);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Unexpected error");
+      }
+    } finally {
+      setLoading(false);
     }
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,20 +87,20 @@ const handleImageAnalyze = async () => {
     setImageBase64(base64);
   };
 
-const handleFoodSearch = async () => {
-  try {
-    const nutri = await fetchNutrition(foodSearch);
-    setNutrition(nutri);
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      setError(err.message);
-    } else {
-      setError("Food not found");
+  const handleFoodSearch = async () => {
+    try {
+      const nutri = await fetchNutrition(foodSearch);
+      setNutrition(nutri);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Food not found");
+      }
+    } finally {
+      setSearchLoading(false);
     }
-  } finally {
-    setSearchLoading(false);
-  }
-};
+  };
 
   return (
     <div className="bg-white rounded-2xl p-6 shadow-sm">
@@ -176,11 +177,16 @@ const handleFoodSearch = async () => {
             <label className="block text-sm font-medium mb-2 text-gray-700">
               Grams:
             </label>
-            <input
+            <Input
               type="number"
               min={1}
               value={grams}
-              onChange={(e) => setGrams(Number(e.target.value))}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === "" || (/^\d{1,3}$/.test(val) && Number(val) >= 1)) {
+                  setGrams(Number(val));
+                }
+              }}
               className="w-24 px-3 py-2 rounded-xl bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
             />
           </div>

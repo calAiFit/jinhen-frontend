@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 interface ActivityLevel {
   [key: string]: number;
@@ -64,7 +65,7 @@ export default function WorkoutPage() {
   const [caloriesBurned, setCaloriesBurned] = useState("");
   const [loading, setLoading] = useState(false);
   console.log(selectedCategory);
-  
+
   const MET_VALUES: METValues = {
     Light: {
       Walking: 3.0,
@@ -220,12 +221,17 @@ export default function WorkoutPage() {
                   <label className="block text-sm font-medium mb-2 text-gray-700">
                     Weight (kg)
                   </label>
-                  <input
-                    type="number"
+                  <Input
+                    type="text"
                     value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 pr-10"
-                    placeholder="Enter your weight"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (val === "" || /^\d{1,3}$/.test(val)) {
+                        setWeight(val);
+                      }
+                    }}
+                    placeholder="Enter weight"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500">
                     kg
@@ -236,7 +242,7 @@ export default function WorkoutPage() {
                   <label className="block text-sm font-medium mb-2 text-gray-700">
                     Duration (minutes)
                   </label>
-                  <input
+                  <Input
                     type="number"
                     value={duration}
                     onChange={(e) => setDuration(e.target.value)}
@@ -255,7 +261,7 @@ export default function WorkoutPage() {
                   <select
                     value={activityLevel}
                     onChange={(e) => setActivityLevel(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                    className="w-full px-4 py-2 rounded-xl bg-white border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                   >
                     <option value="Light">Light</option>
                     <option value="Moderate">Moderate</option>
